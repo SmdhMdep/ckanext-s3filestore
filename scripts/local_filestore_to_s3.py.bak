@@ -10,7 +10,6 @@ Please update the configuration details, all keys are mandatory except
 AWS_STORAGE_PATH.
 
 '''
-from __future__ import print_function
 
 import os
 from sqlalchemy import create_engine
@@ -48,7 +47,7 @@ for root, dirs, files in os.walk(BASE_PATH):
         resource_ids_and_paths[resource_id] = os.path.join(root, files[0])
 
 print('Found {0} resource files in the file system'.format(
-    len(list(resource_ids_and_paths.keys()))))
+    len(resource_ids_and_paths.keys())))
 
 engine = create_engine(SQLALCHEMY_URL)
 connection = engine.connect()
@@ -56,7 +55,7 @@ connection = engine.connect()
 resource_ids_and_names = {}
 
 try:
-    for resource_id, file_path in resource_ids_and_paths.items():
+    for resource_id, file_path in resource_ids_and_paths.iteritems():
         resource = connection.execute(text('''
             SELECT id, url, url_type
             FROM resource
@@ -72,14 +71,14 @@ finally:
     engine.dispose()
 
 print('{0} resources matched on the database'.format(
-    len(list(resource_ids_and_names.keys()))))
+    len(resource_ids_and_names.keys())))
 
 # todo: move to plugin initi so we don't need to reinit secrets
 s3_connection = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 bucket = s3_connection.Bucket(AWS_BUCKET_NAME)
 
 uploaded_resources = []
-for resource_id, file_name in resource_ids_and_names.items():
+for resource_id, file_name in resource_ids_and_names.iteritems():
     key = 'resources/{resource_id}/{file_name}'.format(
         resource_id=resource_id, file_name=file_name)
     if AWS_STORAGE_PATH:

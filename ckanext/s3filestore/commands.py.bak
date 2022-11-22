@@ -1,12 +1,10 @@
 # encoding: utf-8
 
-from __future__ import print_function
-from __future__ import absolute_import
 import sys
 
 from ckan.plugins import toolkit
 
-from .cli_commands import S3FilestoreCommands
+from cli_commands import S3FilestoreCommands
 
 
 class TestConnection(toolkit.CkanCommand, S3FilestoreCommands):

@@ -1,9 +1,5 @@
 # encoding: utf-8
 
-from __future__ import print_function
-from builtins import str
-from builtins import range
-from builtins import object
 from botocore.exceptions import ClientError
 import os
 import sys
@@ -16,7 +12,7 @@ from ckanext.s3filestore import uploader
 from ckanext.s3filestore.uploader import get_s3_session, S3FileStoreException
 
 
-class DBConnection(object):
+class DBConnection:
 
     def __init__(self, config):
         self.SQLALCHEMY_URL = config.get('sqlalchemy.url', 'postgresql://user:pass@localhost/db')
@@ -31,7 +27,7 @@ class DBConnection(object):
         self.engine.dispose()
 
 
-class S3FilestoreCommands(object):
+class S3FilestoreCommands():
 
     def check_config(self):
         exit = False
@@ -70,12 +66,12 @@ class S3FilestoreCommands(object):
                 resource_ids_and_paths[resource_id] = os.path.join(root, files[0])
 
         print('Found {0} resource files in the file system'.format(
-            len(list(resource_ids_and_paths.keys()))))
+            len(resource_ids_and_paths.keys())))
 
         with DBConnection(config) as connection:
             resource_ids_and_names = {}
 
-            for resource_id, file_path in resource_ids_and_paths.items():
+            for resource_id, file_path in resource_ids_and_paths.iteritems():
                 resource = connection.execute(text('''
                     SELECT id, url
                     FROM resource
@@ -93,7 +89,7 @@ class S3FilestoreCommands(object):
                     print("{} is an orphan; no resource points to it".format(file_path))
 
         print('{0} resources matched on the database'.format(
-            len(list(resource_ids_and_names.keys()))))
+            len(resource_ids_and_names.keys())))
 
         _upload_files_to_s3(resource_ids_and_names, resource_ids_and_paths)
 
@@ -114,11 +110,11 @@ class S3FilestoreCommands(object):
                 resource_ids_and_names[_id] = file_name.lower()
 
         print('{0} resources matched on the database'.format(
-            len(list(resource_ids_and_names.keys()))))
+            len(resource_ids_and_names.keys())))
 
         BASE_PATH = os.path.join(config.get('ckan.storage_path', '/var/lib/ckan/default/'), 'resources')
         resource_ids_and_paths = {}
-        for resource_id in list(resource_ids_and_names.keys()):
+        for resource_id in resource_ids_and_names.keys():
             path = '{}/{}/{}/{}'.format(BASE_PATH, resource_id[0:3], resource_id[3:6], resource_id[6:])
             if os.path.isfile(path):
                 resource_ids_and_paths[resource_id] = path
@@ -126,7 +122,7 @@ class S3FilestoreCommands(object):
                 print("[{}] not found on the file system".format(path))
 
         print('Found {0} resource files in the file system'.format(
-            len(list(resource_ids_and_paths.keys()))))
+            len(resource_ids_and_paths.keys())))
 
         _upload_files_to_s3(resource_ids_and_names, resource_ids_and_paths)
 
@@ -178,7 +174,7 @@ class S3FilestoreCommands(object):
                 else:
                     print("{} is an orphan; no resource points to it".format(file_path))
 
-        resource_count = len(list(resource_ids_and_names.keys()))
+        resource_count = len(resource_ids_and_names.keys())
         print('{0} resources matched on the database'.format(resource_count))
         if resource_count == 0:
             return
@@ -226,7 +222,7 @@ def _upload_files_to_s3(resource_ids_and_names, resource_ids_and_paths):
 
     context = {'ignore_auth': True}
     uploaded_resources = []
-    for resource_id, file_name in resource_ids_and_names.items():
+    for resource_id, file_name in resource_ids_and_names.iteritems():
         file_name = munge.munge_filename(file_name)
         key = 'resources/{resource_id}/{file_name}'.format(
             resource_id=resource_id, file_name=file_name)

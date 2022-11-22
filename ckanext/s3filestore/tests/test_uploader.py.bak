@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-from builtins import object
 import datetime
 import io
 import os
@@ -69,7 +68,7 @@ def _assert_private(resource, url, uploader):
 
 
 @with_setup(_setup_function)
-class TestS3Uploader(object):
+class TestS3Uploader():
 
     def test_get_bucket(self):
         '''S3Uploader retrieves bucket as expected'''
@@ -179,7 +178,7 @@ class TestS3Uploader(object):
 
 
 @with_setup(_resource_setup_function)
-class TestS3ResourceUploader(object):
+class TestS3ResourceUploader():
 
     def _test_dataset(self, private=False, title='Test Dataset', author='test'):
         ''' Creates a test dataset.

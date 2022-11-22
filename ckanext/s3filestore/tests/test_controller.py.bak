@@ -1,6 +1,5 @@
 # encoding: utf-8
 
-from builtins import object
 import io
 import logging
 import os

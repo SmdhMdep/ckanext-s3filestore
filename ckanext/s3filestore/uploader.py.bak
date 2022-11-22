@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-from builtins import str
-from builtins import object
 import datetime
 import errno
 import logging
@@ -301,7 +299,7 @@ class BaseS3Uploader(object):
         return url
 
     def as_clean_dict(self, dict):
-        for k, v in list(dict.items()):
+        for k, v in dict.items():
             if isinstance(v, datetime.datetime):
                 dict[k] = v.isoformat()
         return dict
@@ -688,7 +686,7 @@ class S3ResourceUploader(BaseS3Uploader):
         username = g.user if 'user' in dir(g) else '__anonymous__'
         package = self._get_package()
         metadata = {
-            'package_' + field: ensure_ascii(package[field]) for field in list(package.keys())
+            'package_' + field: ensure_ascii(package[field]) for field in package.keys()
             if field != 'notes' and isinstance(package[field], six.string_types)
         }
         metadata['uploaded_by'] = ensure_ascii(username)
