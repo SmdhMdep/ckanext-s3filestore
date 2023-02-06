@@ -2,9 +2,12 @@
 name: CI
 
 on:
-  push:
+  # The current extension tests should be run only during a pull-request as a condition for the merge of the PR in question
+  # Any integration tests (if they exist) should be run in case of a push to the main branch from (preferably) a separate workflow 
   pull_request:
-    branches: master
+    branches: [ "main" ]
+    paths-ignore:
+    - README.md
 
 jobs:
   code_quality:
